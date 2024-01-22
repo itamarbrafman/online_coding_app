@@ -1,0 +1,113 @@
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css" integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ" crossorigin="anonymous">
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js" integrity="sha384-3s6jGaYCRJMSo8TSyvHYG4ejjGQaqxMeQYtHIY2dahoVW25bu+lzC0UhJ3RXN5nK" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>    
+  
+    <%- include("./partials/head.ejs") %>
+  </head>
+
+  <body>
+    <%- include("./partials/nav.ejs") %>
+
+    <div class="about content">
+      <h2>Async case</h2>
+      
+      <% if (studentFlag) { %>
+        <textarea id="codeInput" rows="10" cols="80">  
+      <% } else { %>
+        <pre id="codeInput2"><code>
+      <% } %>
+
+        // Simulating an asynchronous function that fetches data from an API
+        async function fetchDataFromAPI() {
+          try {
+            // Simulating an API endpoint
+            const apiUrl = 'https://jsonplaceholder.typicode.com/posts/1';
+        
+            // Using the 'await' keyword to pause execution until the promise is resolved
+            const response = await fetch(apiUrl);
+        
+            // Checking if the response status is OK (200)
+            if (!response.ok) {
+              throw new Error(`Failed to fetch data. Status: ${response.status}`);
+            }
+        
+            // Parsing the response JSON
+            const data = await response.json();
+        
+            // Logging the fetched data
+            console.log('Fetched data:', data);
+          } catch (error) {
+            // Handling errors if any occur during the asynchronous operations
+            console.error('Error fetching data:', error.message);
+          }
+        }
+        
+        // Calling the asynchronous function
+        fetchDataFromAPI();
+        
+      <% if (studentFlag) { %>
+      </textarea>
+      <% } else { %>
+      </code></pre>
+      <% } %>
+      
+    </div>
+    
+    <%- include("./partials/footer.ejs") %>
+      
+    <% if (studentFlag) { %>
+      <script>
+        document.addEventListener('DOMContentLoaded', (event) => {      
+          // add an event listener to the submit button
+          const codeInput = document.getElementById('codeInput');
+      
+          codeInput.addEventListener('input', () => {
+            const editedCode = codeInput.value;
+            // Send the edited code to the server using an HTTP request
+            fetch('/save-edited-code', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ code: editedCode }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Code saved:', data);
+            })
+            .catch(error => {
+              console.error('Error saving code:', error);
+            });
+          });
+
+        });
+      </script>
+    <% } else { %>
+      <script src="/socket.io/socket.io.js"></script> 
+      <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+          document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+          });
+        });
+
+        const socket = io();
+        socket.on('codeBlockChange', (data) => {
+
+          console.log('Code block changed:');
+
+          const formattedCode = hljs.highlight('javascript', data.code).value;
+
+        const codeInput2 = document.getElementById('codeInput2');
+
+        codeInput2.innerHTML = formattedCode;
+    });
+      </script>
+    <% } %>
+    
+
+  </body>
+</html>
