@@ -5,6 +5,10 @@ const codeBlockSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
 });
 
 const codeBlock = mongoose.model('CodeBlock', codeBlockSchema);

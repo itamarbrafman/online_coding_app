@@ -1,0 +1,93 @@
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css" integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ" crossorigin="anonymous">
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js" integrity="sha384-3s6jGaYCRJMSo8TSyvHYG4ejjGQaqxMeQYtHIY2dahoVW25bu+lzC0UhJ3RXN5nK" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>    
+  
+    <%- include("./partials/head.ejs") %>
+  </head>
+
+  <body>
+    <%- include("./partials/nav.ejs") %>
+
+    <div class="about content">
+      <h2><%= contentTitle %></h2>
+      
+      <% if (studentFlag) { %>
+        <textarea id="codeInput" rows="10" cols="80">  
+      <% } else { %>
+        <pre id="codeInput2"><code>
+      <% } %>
+
+      <%- include("./" + title + ".ejs") %>
+              
+      <% if (studentFlag) { %>
+      </textarea>
+      <% } else { %>
+      </code></pre>
+      <% } %>
+      
+    </div>
+    
+    <%- include("./partials/footer.ejs") %>
+      
+    <% if (studentFlag) { %>
+      <script>
+        document.addEventListener('DOMContentLoaded', (event) => {      
+          // add an event listener to the submit button
+          const codeInput = document.getElementById('codeInput');
+          const titleField = "<%= title %>";
+      
+          codeInput.addEventListener('input', () => {
+            const editedCode = codeInput.value;
+
+            // Send the edited code to the server using an HTTP request
+            fetch("/save-edited-code/<%= title %>", {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ code: editedCode, title: titleField }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Code saved:', data);
+            })
+            .catch(error => {
+              console.error('Error saving code:', error);
+            });
+          });
+
+        });
+      </script>
+    <% } else { %>
+      <script src="/socket.io/socket.io.js"></script> 
+      <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+          document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+          });
+        });
+
+        const socket = io();
+        socket.on('codeBlockChange', (data) => {
+          console.log("logggggggggggggggggggg:", data.title);
+          console.log("logggggggggggggggggggg2222:", data.code);
+
+          if (data.title === "<%= title %>"){
+          console.log('Code block changed:');
+
+          const formattedCode = hljs.highlight('javascript', data.code).value;
+
+        const codeInput2 = document.getElementById('codeInput2');
+
+        codeInput2.innerHTML = formattedCode;
+        }
+    });
+      </script>
+    <% } %>
+    
+
+  </body>
+</html>

@@ -1,0 +1,10 @@
+// Simulating an event listener
+document.addEventListener('click', (event) => {
+  console.log('Click event:', event);
+
+  // Additional event handling logic can be added here
+});
+
+// Simulating a custom event and dispatching it
+const customEvent = new CustomEvent('customEvent', { detail: 'Custom event data' });
+document.dispatchEvent(customEvent);
