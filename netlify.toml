@@ -1,0 +1,8 @@
+[build]
+  base = "/home/itamar/online_coding_app"
+  command = "npm install && npm start"  # Adjust based on your project
+  publish = "public"  # Adjust based on your project
+
+[context.production.environment]
+  NODE_ENV = "production"
+  # Add other environment variables as needed
