@@ -1,0 +1,29 @@
+// Simulating an asynchronous function that fetches data from an API
+async function fetchDataFromAPI() {
+  try {
+    // Simulating an API endpoint
+    const apiUrl = 'https://jsonplaceholder.typicode.com/posts/1';
+
+    // Using the 'await' keyword to pause execution until the promise is resolved
+    const response = await fetch(apiUrl);
+
+    // Checking if the response status is OK (200)
+    if (!response.ok) {
+      throw new Error('Failed to fetch data. Status');
+    }
+
+    // Parsing the response JSON
+    const data = await response.json();
+
+    // Logging the fetched data
+    console.log('Fetched data:', data);
+  } catch (error) {
+    // Handling errors if any occur during the asynchronous operations
+    console.error('Error fetching data:', error.message);
+  }
+}
+
+// Calling the asynchronous function
+fetchDataFromAPI();
+
+Done editing this code!

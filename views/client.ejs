@@ -11,21 +11,14 @@
   <body>
     <%- include("./partials/nav.ejs") %>
 
-    <div class="about content">
+    <div class="about_content">
       <h2><%= contentTitle %></h2>
       
       <% if (studentFlag) { %>
-        <textarea id="codeInput" rows="10" cols="80">  
+        <div id="smileyFace">😊</div>
+        <textarea id="codeInput" rows="30" cols="160"><%- include("./" + title + ".ejs") %></textarea>
       <% } else { %>
-        <pre id="codeInput2"><code>
-      <% } %>
-
-      <%- include("./" + title + ".ejs") %>
-              
-      <% if (studentFlag) { %>
-      </textarea>
-      <% } else { %>
-      </code></pre>
+        <pre id="codeInput2"><code><%- include("./" + title + ".ejs") %></code></pre>
       <% } %>
       
     </div>
@@ -40,7 +33,15 @@
           const titleField = "<%= title %>";
       
           codeInput.addEventListener('input', () => {
-            const editedCode = codeInput.value;
+            const editedCode = codeInput.value.trim(); // Remove leading and trailing whitespace
+
+            const solutionContent = `<%- solutionContent %>`;
+
+            if (editedCode === solutionContent) {
+              smileyFace.style.display = 'block';
+            } else {
+              smileyFace.style.display = 'none';
+            }
 
             // Send the edited code to the server using an HTTP request
             fetch("/save-edited-code/<%= title %>", {
@@ -72,22 +73,18 @@
 
         const socket = io();
         socket.on('codeBlockChange', (data) => {
-          console.log("logggggggggggggggggggg:", data.title);
-          console.log("logggggggggggggggggggg2222:", data.code);
 
-          if (data.title === "<%= title %>"){
+        if (data.title === "<%= title %>"){
           console.log('Code block changed:');
 
           const formattedCode = hljs.highlight('javascript', data.code).value;
 
-        const codeInput2 = document.getElementById('codeInput2');
+          const codeInput2 = document.getElementById('codeInput2');
 
-        codeInput2.innerHTML = formattedCode;
-        }
-    });
+          codeInput2.innerHTML = formattedCode;
+          }
+        });
       </script>
     <% } %>
-    
-
   </body>
 </html>

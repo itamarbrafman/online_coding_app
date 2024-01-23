@@ -9,7 +9,7 @@ async function fetchDataFromAPI() {
 
     // Checking if the response status is OK (200)
     if (!response.ok) {
-      throw new Error(`Failed to fetch data. Status: ${response.status}`);
+      throw new Error('Failed to fetch data. Status');
     }
 
     // Parsing the response JSON

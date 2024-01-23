@@ -1,0 +1,19 @@
+// Arrow functions
+const add = (a, b) => a + b;
+
+// Destructuring assignment
+const person = { name: 'John', age: 30, city: 'Example City' };
+const { name, age } = person;
+
+// Template literals
+const message = 'Hello, {name}! You are {age} years old.';
+
+// Spread/rest operator
+const numbers = [1, 2, 3, 4, 5];
+const sum = (a, b, ...rest) => {
+  const additionalSum = rest.reduce((acc, num) => acc + num, 0);
+  return a + b + additionalSum;
+};
+console.log('Sum:', sum(...numbers));
+
+Done editing this code!
